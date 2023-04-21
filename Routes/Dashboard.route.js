@@ -12,5 +12,3 @@ router.post('/register/:workshopId', controllers.viewDashboard)
 module.exports = router
 
 
-
-

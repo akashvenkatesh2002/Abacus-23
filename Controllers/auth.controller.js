@@ -313,3 +313,78 @@ exports.changePassword = async(req, res, next) => {
         next(error)
     }
 }
+
+exports.verifyEmail = async (email) => {
+    try {
+        // const email = req.body.email;
+
+        // const user = await models.User.findOne({
+        //     where: {
+        //         email: email
+        //     }
+        // })
+
+        // if (!user) throw createError.BadRequest(`Email ID not registered`)
+
+        // OTP
+
+        const generateRandomString = function (length = 8) {
+            return Math.random().toString(20).slice(2, 2 + length)
+        }
+
+        const otp = generateRandomString()
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedOtp = await bcrypt.hash(otp, salt)
+
+        const userUpdate = await models.User.update(
+            {
+                otp: hashedOtp,
+                otpTimestamp: Date()
+            },
+            { where: { email: email } }
+        )
+
+        //
+
+        async function sendMail() {
+
+            try {
+                const accessToken = await oAuth2Client.getAccessToken()
+
+                const transport = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        type: 'OAuth2',
+                        user: process.env.USEREMAILID,
+                        clientId: CLIENT_ID,
+                        clientSecret: CLIENT_SECRET,
+                        refreshToken: REFRESH_TOKEN,
+                        accessToken: accessToken
+                    }
+                })
+
+                const mailOptions = {
+                    from: process.env.USEREMAILID,
+                    to: email,
+                    subject: 'Password Reset',
+                    text: 'OTP to reset password',
+                    html: '<p>Your OTP is <b>' + otp + '</b></p>'
+                }
+
+                const result = await transport.sendMail(mailOptions)
+                return result
+
+            } catch (error) {
+                next(error)
+            }
+        }
+
+        sendMail()
+            .then((result) => res.status(201).send({ message: "OTP is sent to your email ID" }))
+            .catch((error) => next(error))
+
+    } catch (error) {
+        next(error)
+    }
+}
