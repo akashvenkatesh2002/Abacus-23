@@ -3,6 +3,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
+    queryInterface.addColumn(
+      'Users', // table name
+      'isPassBought', // new field name
+      {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+      },
+    )
     /**
      * Add altering commands here.
      *
@@ -12,6 +20,10 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
+    queryInterface.removeColumn(
+      'Users', // table name
+      'isPassBought', // new field name
+    )
     /**
      * Add reverting commands here.
      *
