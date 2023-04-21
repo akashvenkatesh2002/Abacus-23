@@ -5,12 +5,16 @@ const {google} = require('googleapis')
 
 require('dotenv').config()
 
+const uuid = require("short-unique-id")
 const models = require("../database/models");
 const createError = require("http-errors");
 const bcrypt = require("bcrypt");
 const {userSchema, loginSchema} = require("../helpers/validation.schema");
 const {signAccessToken} = require("../helpers/jwt_helper");
 const sequelize = require("sequelize");
+
+const abacusIdGen = new uuid({ length: 8 });
+
 
 const CLIENT_ID=process.env.GOOGLECLIENT_ID
 const CLIENT_SECRET=process.env.CLIENT_SECRET
@@ -36,6 +40,7 @@ exports.registerUser = async(req, res, next) => {
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(result.password, salt)
         result.password = hashedPassword
+        result.abacusId = abacusIdGen()
 
         const savedUser = await models.User.create(result)
         const accessToken = await signAccessToken(savedUser.email)
