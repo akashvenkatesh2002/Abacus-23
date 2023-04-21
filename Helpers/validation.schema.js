@@ -8,7 +8,8 @@ const userSchema = Joi.object({
     year: Joi.number().required(),
     collegeName: Joi.string().required(),
     department: Joi.string().required(),
-    accomodation: Joi.string().required()
+    accomodation: Joi.string().required(),
+    collegeEmail: Joi.string().email().lowercase().required()
 })
 
 const loginSchema = Joi.object({
