@@ -53,7 +53,7 @@ export const paymentVerification = async (req, res) => {
     }
 };
 //------------------------------------------------------
-export const verification = async (req, res) => {
+exports.verification = async (req, res) => {
 
 	console.log(req.body)
 
@@ -87,7 +87,7 @@ export const verification = async (req, res) => {
 	//res.json({ status: 'ok' })
 };
 
-export const razorpay = async (req, res) => {
+exports.razorpay = async (req, res) => {
     const payment_capture = 1
 	const amount = 499
 	const currency = 'INR'
