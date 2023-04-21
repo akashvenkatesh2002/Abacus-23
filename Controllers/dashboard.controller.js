@@ -53,7 +53,17 @@ exports.registerEvent = async(req, res, next) => {
         })
 
         const abacusId = user.abacusId;
+        const isPassBought = user.isPassBought;
         
+        //if (pass bought) no payment
+        //else {
+        //    payment
+        //    
+        //    if (payment successful) {
+        //       enter in db   
+        //    } else {
+        //       throw error
+        //    }
         //PAYEMENT 
        
         /*
