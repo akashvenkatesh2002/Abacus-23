@@ -37,6 +37,15 @@ exports.registerUser = async(req, res, next) => {
 
         if(user) throw createError.Conflict(`${req.body.email} is already registered`)
 
+        const userCollegeEmail = await models.User.findOne({
+            where: {
+                collegeEmail: result.collegeEmail
+            }
+        });
+
+        if(userCollegeEmail) throw createError.Conflict(`${req.body.email} is already registered for college email`);
+
+
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(result.password, salt)
         result.password = hashedPassword
