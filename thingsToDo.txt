@@ -1,6 +1,6 @@
 1. Implement payment portal
 2. Create events pass (on the front end)
 3. IsCEGIAN function
-4. If isPassBought allow event registration, else only if they pay, is PassBought = true 
+4. If isPassBought, allow event registration, else only if they pay, is PassBought = true 
 5. Events registration allowed only if pass bought, else pop up saying 'buy pass'
-6. Check if payment successfull for each workshop, only then add them 
+6. Check if payment successful for each workshop, only then add them 
