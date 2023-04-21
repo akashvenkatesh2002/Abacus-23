@@ -5,8 +5,8 @@ const cors = require('cors')
 require('dotenv').config()
 
 const { verifyAccessToken } = require('./Helpers/jwt_helper')
-const AuthRoute = require('./routes/Auth.route')
-const DashboardRoute = require('./routes/Dashboard.route')
+const AuthRoute = require('./Routes/Auth.route')
+const DashboardRoute = require('./Routes/Dashboard.route')
 
 const app = express()
 app.use(morgan('dev'))
