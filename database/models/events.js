@@ -15,8 +15,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   Events.init({
     eventId: DataTypes.ARRAY(DataTypes.STRING),
-    isPaid: DataTypes.BOOLEAN,
-    abacusId: DataTypes.STRING
+    // isPaid: DataTypes.BOOLEAN,
+    abacusId: DataTypes.STRING, 
+    id: DataTypes.INTEGER,
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Events',

@@ -3,4 +3,8 @@
 DONE 3. IsCEGIAN function
 4. If isPassBought, allow event registration, else only if they pay, is PassBought = true 
 5. Check if payment successful for each workshop, only then add them 
-6. College Email should be unique.
+DONE 6. College Email should be unique.
+7. Put code from dashboard.controller to auth.controller, and dashboard.routes to auth.routes
+8. If isPassBought == false, and they click register and pay, what to do? 
+9. OTP to email
+10. Workshop isPaid problem
