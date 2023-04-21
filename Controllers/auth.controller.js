@@ -42,13 +42,13 @@ exports.registerUser = async(req, res, next) => {
         result.password = hashedPassword
         result.abacusId = abacusIdGen()
 
-        let bool = false;
+        let isPass = false;
         const { collegeEmail }  = req.body;
         if(collegeEmail.substring(10) === '@student.annauniv.edu') {
-            bool = true;
+            isPass = true;
         }
 
-        result.isPassBought = bool;
+        result.isPassBought = isPass;
         console.log(result.isPassBought);
 
         const savedUser = await models.User.create(result)
