@@ -3,15 +3,18 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('Events', {
+    await queryInterface.createTable('Workshops', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      eventId: {
+      workshopId: {
         type: Sequelize.ARRAY(Sequelize.STRING)
+      },
+      isPaid: {
+        type: Sequelize.BOOLEAN
       },
       abacusId: {
         type: Sequelize.STRING,
@@ -35,7 +38,7 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('Events');
+    await queryInterface.dropTable('Workshops');
     /**
      * Add reverting commands here.
      *
