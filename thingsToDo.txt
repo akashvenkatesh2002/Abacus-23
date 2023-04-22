@@ -8,3 +8,4 @@ DONE 6. College Email should be unique.
 8. If isPassBought == false, and they click register and pay, what to do? 
 9. OTP to email
 10. Workshop isPaid problem
+11. Add Department column to Users table
