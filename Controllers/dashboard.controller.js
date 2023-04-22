@@ -14,7 +14,7 @@ exports.viewDashboard = async (req, res, next) => {
 
         const accessToken = req.body.accessToken
         const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
-        email = accessTokenDetails.aud
+        const email = accessTokenDetails.aud
 
         const user = await models.User.findOne({
             where: {
@@ -44,7 +44,7 @@ exports.registerEvent = async (req, res, next) => {
         const ID = req.params.eventId;
         const accessToken = req.body.accessToken
         const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
-        email = accessTokenDetails.aud
+        const email = accessTokenDetails.aud
 
         const user = await models.User.findOne({
             where: {
@@ -126,7 +126,7 @@ exports.registerWorkshop = async (req, res, next) => {
         const { workshopId } = req.params;
         const accessToken = req.body.accessToken
         const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
-        email = accessTokenDetails.aud
+        const email = accessTokenDetails.aud
 
         const user = await models.User.findOne({
             where: {

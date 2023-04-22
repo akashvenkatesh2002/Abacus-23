@@ -5,7 +5,7 @@ const shortid = require('shortid');
 const Razorpay = require('razorpay');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-import { instance } from "../server/index.js";
+import { instance } from "../app.js";
 
 exports.checkout = async (req, res, next) => {
     const options = {
