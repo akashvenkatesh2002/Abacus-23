@@ -17,7 +17,10 @@ module.exports = (sequelize, DataTypes) => {
     eventId: DataTypes.ARRAY(DataTypes.STRING),
     // isPaid: DataTypes.BOOLEAN,
     abacusId: DataTypes.STRING, 
-    id: DataTypes.INTEGER,
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true
+    },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   }, {

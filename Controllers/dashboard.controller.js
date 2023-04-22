@@ -89,7 +89,7 @@ exports.registerEvent = async (req, res, next) => {
         if (isAbacusId && isPassBought === true) {
             const retValue = await models.Events.update(
                 {
-                    'eventId': sequelize.fn('array_append', sequelize.col('eventId'), ID)
+                    eventId: sequelize.fn('array_cat', sequelize.col('eventId'), ID)
                 },
                 {
                     where: { abacusId: abacusId }
@@ -100,7 +100,7 @@ exports.registerEvent = async (req, res, next) => {
             if (isPassBought === true) {
                 const retValue = await models.Events.create({
                     abacusId: abacusId,
-                    eventId: sequelize.fn('array_append', sequelize.col('eventId'), ID),
+                    eventId: sequelize.fn('array_cat', sequelize.col('eventId'), ID),
                     // isPaid: true
                 })
             }
