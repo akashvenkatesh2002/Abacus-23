@@ -18,14 +18,18 @@ module.exports = {
         })
     },
     verifyAccessToken: (req, res, next) => {
+        console.log(req.headers['authorization'])
         if(!req.headers['authorization']) return next(createError.Unauthorized())
         const authHeader = req.headers['authorization']
         const bearerToken = authHeader.split(' ')
-        const token = bearerToken[1]
+        // console.log("Hii all " + bearerToken)
+        const token = bearerToken[0]
         JWT.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
             if(err) {
+                console.log("Hii guyz " + token)
                 return next(createError.Unauthorized())
             }
+            console.log("Hii guys " + token)
             req.payload = payload
             next()
         })
