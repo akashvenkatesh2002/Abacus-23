@@ -5,7 +5,7 @@ const shortid = require('shortid');
 const Razorpay = require('razorpay');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-import { instance } from "../app.js";
+const instance = require("../app.js");
 
 exports.checkout = async (req, res, next) => {
     const options = {
@@ -21,7 +21,7 @@ exports.checkout = async (req, res, next) => {
     });
 };
 
-export const paymentVerification = async (req, res) => {
+exports.paymentVerification = async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
         req.body;
 
@@ -89,7 +89,7 @@ exports.verification = async (req, res) => {
 
 exports.razorpay = async (req, res) => {
     const payment_capture = 1
-	const amount = 499
+	const amount = req.body.amount
 	const currency = 'INR'
 
 	const options = {
