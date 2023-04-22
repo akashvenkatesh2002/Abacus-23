@@ -9,7 +9,7 @@ require('dotenv').config()
 const { verifyAccessToken } = require('./Helpers/jwt_helper')
 const AuthRoute = require('./Routes/Auth.route')
 const DashboardRoute = require('./Routes/Dashboard.route')
-// const paymentRoute = require('./Routes/paymentRoute')
+const PaymentRoute = require('./Routes/paymentRoute')
 
 const app = express()
 app.use(morgan('dev'))
@@ -23,6 +23,7 @@ app.get('/', verifyAccessToken, async(req, res, next) => {
 
 app.use('/auth', AuthRoute)
 app.use('/dashboard', DashboardRoute)
+app.use('/payment', PaymentRoute)
 // app.use('/payment', paymentRoute)
 
 app.use(async(req, res, next) => {

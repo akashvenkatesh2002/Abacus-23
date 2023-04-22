@@ -1,8 +1,8 @@
 const { Router } = require('express');
 const controllers = require('../Controllers/payment.controller');
-const schemas = require('../database/models/paymentSchema');
+//const schemas = require('../database/models/paymentSchema');
 
-const middleware = require('../middleware/');
+//const middleware = require('../middleware/');
 
 const router = Router();
 
