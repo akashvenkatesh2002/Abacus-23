@@ -9,3 +9,14 @@ DONE 6. College Email should be unique.
 9. OTP to email
 10. Workshop isPaid problem
 11. Add Department column to Users table
+
+Today
+1. Test events
+2. Test workshop
+3. Logout all devices
+4. Gsignin
+
+Tomorrow
+1. Get details of forget, reset and change password from Girish
+2. Get details from user after GSignIn (Front End)
+3. Integration
