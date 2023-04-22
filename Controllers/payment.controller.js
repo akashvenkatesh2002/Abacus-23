@@ -10,6 +10,7 @@ const instance = new razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
     key_secret: process.env.RAZORPAY_APT_SECRET,
 });
+
 exports.checkout = async (req, res, next) => {
     const options = {
         amount: Number(req.body.amount * 100),

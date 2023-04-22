@@ -40,7 +40,6 @@ exports.viewDashboard = async (req, res, next) => {
 
 exports.registerEvent = async (req, res, next) => {
     try {
-
         const ID = req.params.eventId;
         const accessToken = req.body.accessToken
         const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
