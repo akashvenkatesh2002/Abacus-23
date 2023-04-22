@@ -55,67 +55,48 @@ exports.registerEvent = async (req, res, next) => {
         const abacusId = user.abacusId;
         const isPassBought = user.isPassBought;
         console.log("3 " + abacusId);
-        //if (pass bought) no payment
-        //else {
-        //    payment
-        //    
-        //    if (payment successful) {
-        //       enter in db   
-        //    } else {
-        //       throw error
-        //    }
-        //PAYEMENT 
-
-        /*
-        const [user, created] = await User.findOrCreate({
-            where: { abacusId : abacusId },
-            {
-                eventId: sequelize.fn('array_append', sequelize.col('eventId'), eventId)
-             },
-          });
-        
-        console.log(user.username); // 'sdepold'
-        console.log(user.job); // This may or may not be 'Technical Lead JavaScript'
-        console.log(created);
-        */
-
-        //if payment successful
-        const isAbacusId = await models.Events.findOne({
-            where: {
-                abacusId: abacusId
-            }
-        });
-        console.log("4 " + isAbacusId);
-        if (isAbacusId && isPassBought === true) {
-            const retValue = await models.Events.update(
-                {
-                    eventId: sequelize.fn('array_cat', sequelize.col('eventId'), [ID])
-                },
-                {
-                    where: { abacusId: abacusId }
+      
+        //if isPassBought true {
+            const isAbacusId = await models.Events.findOne({
+                where: {
+                    abacusId: abacusId
                 }
-            )
-            // retValue.save() 
-        } else {
-            if (isPassBought === true) {
-                console.log("5 " + "Inside IF of Else");
-                const retValue = await models.Events.create({
-                    abacusId: abacusId,
-                    eventId: ["1", "2"],
-                    // isPaid: true
-                })
+            });
+            console.log("4 " + isAbacusId);
+            if (isAbacusId) {
+                
+                const eventIdArray = isAbacusId.eventId;
+
+                if(eventIdArray.includes(eventId)) {
+                    throw new createError("Already registered for the Event!");
+                }
+
+                const retValue = await models.Events.update(
+                    {
+                        eventId: sequelize.fn('array_cat', sequelize.col('eventId'), [ID])
+                    },
+                    {
+                        where: { abacusId: abacusId }
+                    }
+                )
+                // retValue.save() 
+            } else {
+                // if (isPassBought === true) {
+                    console.log("5 " + "Inside IF of Else");
+                    const retValue = await models.Events.create({
+                        abacusId: abacusId,
+                        eventId: ["1", "2"],
+                        // isPaid: true
+                    })
+                // }
             }
-
-            else {
-                //Handle buy pass in frontend
-                throw new createError.Conflict("Please buy the pass for registering for an event");
-            }
-
-            // retValue.save();
-        }
-
-        res.status(201).send({ message: "Event Registered Successfully!" })
-
+            
+            res.status(201).send({ message: "Event Registered Successfully!" })
+    // } else {
+            //Handle buy pass in frontend, successful and unsuccessful
+            res.redirect("/razorpay");
+            throw new createError.Conflict("Please buy the pass for registering for an event");          
+        //}
     } catch (error) {
         next(error)
     }
@@ -136,10 +117,7 @@ exports.registerWorkshop = async (req, res, next) => {
         })
 
         const abacusId = user.abacusId;
-
-        //PAYEMENT 
-
-        //if payment successful
+    
         const isAbacusId = await models.Workshops.findOne({
             where: {
                 abacusId: abacusId
@@ -147,24 +125,40 @@ exports.registerWorkshop = async (req, res, next) => {
         });
 
         if (isAbacusId) {
-            const retValue = await models.Workshops.update(
-                {
-                    eventId: sequelize.fn('array_append', sequelize.col('eventId'), eventId)
-                },
-                {
-                    where: { abacusId: abacusId }
-                }
-            )
+            const workshopIdArray = isAbacusId.workshopId;
+            if(workshopIdArray.includes(workshopId)) {
+                throw new createError("Already registered for the workshop!");
+            }
+
+            //payment
+            // if payment successful {
+                const retValue = await models.Workshops.update(
+                    {
+                        eventId: sequelize.fn('array_append', sequelize.col('eventId'), eventId)
+                    },
+                    {
+                        where: { abacusId: abacusId }
+                    }
+                )
+                res.status(201).send({ message: "Workshop Registered Successfully!" })
+            //} else {
+                throw new createError("Payment unsuccessful!!");
+                //redirect to homepage
+            // }
         } else {
-            const retValue = await models.Workshops.create({
-                abacusId: abacusId,
-                workshopId: sequelize.fn('array_append', sequelize.col('workshopId'), workshopId),
-                isPaid: true
-            })
-        }
-
-        res.status(201).send({ message: "Workshop Registered Successfully!" })
-
+            //payment
+            //if payment successful {
+                const retValue = await models.Workshops.create({
+                    abacusId: abacusId,
+                    workshopId: sequelize.fn('array_append', sequelize.col('workshopId'), workshopId),
+                    isPaid: true
+                })
+                res.status(201).send({ message: "Workshop Registered Successfully!" })
+            //} else {
+                throw new createError("Payment unsuccessful!!");
+                //redirect to homepage
+            //}
+        }      
     } catch (error) {
         next(error)
     }
