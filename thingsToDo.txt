@@ -12,11 +12,11 @@ DONE 6. College Email should be unique.
 
 Today
 1. Test events
-2. Test workshop
-3. Logout all devices
-4. Gsignin
+2. Logout all devices
 
 Tomorrow
 1. Get details of forget, reset and change password from Girish
 2. Get details from user after GSignIn (Front End)
 3. Integration
+4. Test workshop
+5. Gsignin
