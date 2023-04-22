@@ -2,11 +2,14 @@ const models = require("../database/models");
 const bcrypt = require('bcrypt');
 const createHttpError = require('http-errors');
 const shortid = require('shortid');
-const Razorpay = require('razorpay');
+const razorpay = require('razorpay');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const instance = require("../app.js");
-
+//const instance = require("../app.js");
+const instance = new razorpay({
+    key_id: process.env.RAZORPAY_API_KEY,
+    key_secret: process.env.RAZORPAY_APT_SECRET,
+});
 exports.checkout = async (req, res, next) => {
     const options = {
         amount: Number(req.body.amount * 100),
@@ -56,10 +59,11 @@ exports.paymentVerification = async (req, res) => {
 exports.verification = async (req, res) => {
 
 	console.log(req.body)
-
+    
 	const crypto = require('crypto')
-
+    console.log(process.env.RAZORPAY_API_SECRET);
 	const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_API_SECRET)
+    
 	shasum.update(JSON.stringify(req.body))
 	const digest = shasum.digest('hex')
 
@@ -67,11 +71,11 @@ exports.verification = async (req, res) => {
 
 	if (digest === req.headers['x-razorpay-signature']) {
 		console.log('request is legit')
-		await models.paymentSchema.create({
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature,
-        });
+		// await models.paymentSchema.create({
+        //     razorpay_order_id,
+        //     razorpay_payment_id,
+        //     razorpay_signature,
+        // });
 
 		require('fs').writeFileSync('payment1.json', JSON.stringify(req.body, null, 4))
         res.status(200).json({
@@ -87,7 +91,7 @@ exports.verification = async (req, res) => {
 	//res.json({ status: 'ok' })
 };
 
-exports.razorpay = async (req, res) => {
+exports.paymentgateway = async (req, res) => {
     const payment_capture = 1
 	const amount = req.body.amount
 	const currency = 'INR'
@@ -100,7 +104,8 @@ exports.razorpay = async (req, res) => {
 	}
 
 	try {
-		const response = await razorpay.orders.create(options)
+		const response = await instance.orders.create(options)
+       
 		console.log(response)
 		res.json({
 			id: response.id,
