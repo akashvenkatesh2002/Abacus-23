@@ -59,10 +59,11 @@ exports.paymentVerification = async (req, res) => {
 exports.verification = async (req, res) => {
 
 	console.log(req.body)
-
+    
 	const crypto = require('crypto')
-
+    console.log(process.env.RAZORPAY_API_SECRET);
 	const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_API_SECRET)
+    
 	shasum.update(JSON.stringify(req.body))
 	const digest = shasum.digest('hex')
 
@@ -70,11 +71,11 @@ exports.verification = async (req, res) => {
 
 	if (digest === req.headers['x-razorpay-signature']) {
 		console.log('request is legit')
-		await models.paymentSchema.create({
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature,
-        });
+		// await models.paymentSchema.create({
+        //     razorpay_order_id,
+        //     razorpay_payment_id,
+        //     razorpay_signature,
+        // });
 
 		require('fs').writeFileSync('payment1.json', JSON.stringify(req.body, null, 4))
         res.status(200).json({
