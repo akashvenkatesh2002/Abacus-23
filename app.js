@@ -2,6 +2,8 @@ const express = require('express')
 const morgan = require('morgan')
 const createError = require('http-errors')
 const cors = require('cors')
+const Razorpay = require('razorpay')
+
 require('dotenv').config()
 
 const { verifyAccessToken } = require('./Helpers/jwt_helper')
@@ -42,3 +44,8 @@ const PORT = process.env.PORT || 3000
 app.listen(PORT, ()=> {
     console.log(`Server running on port ${PORT}`)
 })
+
+exports.instance = new Razorpay({
+    key_id: process.env.RAZORPAY_API_KEY,
+    key_secret: process.env.RAZORPAY_APT_SECRET,
+});
