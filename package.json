@@ -29,6 +29,7 @@
     "razorpay": "^2.8.6",
     "sequelize": "^6.30.0",
     "sequelize-cli": "^6.6.0",
-    "short-unique-id": "^4.4.4"
+    "short-unique-id": "^4.4.4",
+    "shortid": "^2.2.16"
   }
 }

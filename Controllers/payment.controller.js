@@ -2,11 +2,14 @@ const models = require("../database/models");
 const bcrypt = require('bcrypt');
 const createHttpError = require('http-errors');
 const shortid = require('shortid');
-const Razorpay = require('razorpay');
+const razorpay = require('razorpay');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const instance = require("../app.js");
-
+//const instance = require("../app.js");
+const instance = new razorpay({
+    key_id: process.env.RAZORPAY_API_KEY,
+    key_secret: process.env.RAZORPAY_APT_SECRET,
+});
 exports.checkout = async (req, res, next) => {
     const options = {
         amount: Number(req.body.amount * 100),
@@ -87,7 +90,7 @@ exports.verification = async (req, res) => {
 	//res.json({ status: 'ok' })
 };
 
-exports.razorpay = async (req, res) => {
+exports.paymentgateway = async (req, res) => {
     const payment_capture = 1
 	const amount = req.body.amount
 	const currency = 'INR'
@@ -100,7 +103,8 @@ exports.razorpay = async (req, res) => {
 	}
 
 	try {
-		const response = await razorpay.orders.create(options)
+		const response = await instance.orders.create(options)
+       
 		console.log(response)
 		res.json({
 			id: response.id,
