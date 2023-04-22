@@ -111,8 +111,7 @@ exports.registerEvent = async (req, res, next) => {
 
 exports.registerWorkshop = async (req, res, next) => {
     try {
-
-        const { workshopId } = req.params;
+        const WId = req.params.workshopId;
         const accessToken = req.body.accessToken
         const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
         const email = accessTokenDetails.aud
@@ -157,11 +156,11 @@ exports.registerWorkshop = async (req, res, next) => {
             //if payment successful {
             const retValue = await models.Workshops.create({
                 abacusId: abacusId,
-                workshopId: sequelize.fn('array_append', sequelize.col('workshopId'), workshopId),
+                workshopId: [WId],
             })
             res.status(201).send({ message: "Workshop Registered Successfully!" })
             //} else {
-            throw new createError("Payment unsuccessful!!");
+            // throw new createError("Payment unsuccessful!!"); --TO BE WRITTEN IN ELSE
             //redirect to homepage
             //}
         }
