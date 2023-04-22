@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Workshops.init({
     workshopId: DataTypes.ARRAY(DataTypes.STRING),
-    isPaid: DataTypes.BOOLEAN,
     abacusId: DataTypes.STRING
   }, {
     sequelize,

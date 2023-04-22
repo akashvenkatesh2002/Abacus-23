@@ -12,12 +12,8 @@ module.exports = {
       workshopId: {
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
-      isPaid: {
-        type: Sequelize.BOOLEAN
-      },
       abacusId: {
-        type: Sequelize.STRING,
-        references: { model: 'Users', key: 'abacusId' }
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

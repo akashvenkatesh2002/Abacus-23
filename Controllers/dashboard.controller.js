@@ -45,16 +45,16 @@ exports.registerEvent = async (req, res, next) => {
         const accessToken = req.body.accessToken
         const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
         const email = accessTokenDetails.aud
-
+        console.log("1 " + ID);
         const user = await models.User.findOne({
             where: {
                 email: email
             }
         })
-
+        console.log("2 " + user);
         const abacusId = user.abacusId;
         const isPassBought = user.isPassBought;
-
+        console.log("3 " + abacusId);
         //if (pass bought) no payment
         //else {
         //    payment
@@ -85,11 +85,11 @@ exports.registerEvent = async (req, res, next) => {
                 abacusId: abacusId
             }
         });
-
+        console.log("4 " + isAbacusId);
         if (isAbacusId && isPassBought === true) {
             const retValue = await models.Events.update(
                 {
-                    eventId: sequelize.fn('array_cat', sequelize.col('eventId'), ID)
+                    eventId: sequelize.fn('array_cat', sequelize.col('eventId'), [ID])
                 },
                 {
                     where: { abacusId: abacusId }
@@ -98,9 +98,10 @@ exports.registerEvent = async (req, res, next) => {
             // retValue.save() 
         } else {
             if (isPassBought === true) {
+                console.log("5 " + "Inside IF of Else");
                 const retValue = await models.Events.create({
                     abacusId: abacusId,
-                    eventId: sequelize.fn('array_cat', sequelize.col('eventId'), ID),
+                    eventId: ["1", "2"],
                     // isPaid: true
                 })
             }
