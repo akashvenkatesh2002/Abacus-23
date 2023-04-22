@@ -286,6 +286,9 @@ exports.forgotPassword = async (req, res, next) => {
 
         //
 
+        const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
+        oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
+
         async function sendMail() {
 
             try {

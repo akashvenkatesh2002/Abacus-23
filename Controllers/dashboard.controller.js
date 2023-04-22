@@ -134,7 +134,7 @@ exports.registerWorkshop = async (req, res, next) => {
             // if payment successful {
                 const retValue = await models.Workshops.update(
                     {
-                        eventId: sequelize.fn('array_append', sequelize.col('eventId'), eventId)
+                        workshopId: sequelize.fn('array_append', sequelize.col('workshopId'), workshopId)
                     },
                     {
                         where: { abacusId: abacusId }
@@ -151,7 +151,6 @@ exports.registerWorkshop = async (req, res, next) => {
                 const retValue = await models.Workshops.create({
                     abacusId: abacusId,
                     workshopId: sequelize.fn('array_append', sequelize.col('workshopId'), workshopId),
-                    isPaid: true
                 })
                 res.status(201).send({ message: "Workshop Registered Successfully!" })
             //} else {
