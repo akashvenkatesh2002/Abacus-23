@@ -10,59 +10,58 @@ const instance = new razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
     key_secret: process.env.RAZORPAY_APT_SECRET,
 });
+// exports.checkout = async (req, res, next) => {
+//     const options = {
+//         amount: Number(req.body.amount * 100),
+//         currency: "INR",
+//     };
+//     const order = await instance.orders.create(options);
 
-exports.checkout = async (req, res, next) => {
-    const options = {
-        amount: Number(req.body.amount * 100),
-        currency: "INR",
-    };
-    const order = await instance.orders.create(options);
+//     res.status(200).json({
+//         success: true,
+//         order,
+//         amount,
+//     });
+// };
 
-    res.status(200).json({
-        success: true,
-        order,
-        amount,
-    });
-};
+// exports.paymentVerification = async (req, res) => {
+//     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+//         req.body;
 
-exports.paymentVerification = async (req, res) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-        req.body;
+//     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
+//     const expectedSignature = crypto
+//         .createHmac("sha256", process.env.RAZORPAY_APT_SECRET)
+//         .update(body.toString())
+//         .digest("hex");
 
-    const expectedSignature = crypto
-        .createHmac("sha256", process.env.RAZORPAY_APT_SECRET)
-        .update(body.toString())
-        .digest("hex");
+//     const isAuthentic = expectedSignature === razorpay_signature;
 
-    const isAuthentic = expectedSignature === razorpay_signature;
+//     if (isAuthentic) {
+//         // Database comes here
 
-    if (isAuthentic) {
-        // Database comes here
+//         await models.paymentSchema.create({
+//             razorpay_order_id,
+//             razorpay_payment_id,
+//             razorpay_signature,
+//         });
 
-        await models.paymentSchema.create({
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature,
-        });
-
-        res.redirect(
-            `http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`
-        );
-    } else {
-        res.status(400).json({
-            success: false,
-        });
-    }
-};
+//         res.redirect(
+//             `http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`
+//         );
+//     } else {
+//         res.status(400).json({
+//             success: false,
+//         });
+//     }
+// };
 //------------------------------------------------------
 exports.verification = async (req, res) => {
 
 	console.log(req.body)
     
 	const crypto = require('crypto')
-    console.log(process.env.RAZORPAY_API_SECRET);
+    
 	const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_API_SECRET)
     
 	shasum.update(JSON.stringify(req.body))
@@ -105,8 +104,7 @@ exports.paymentgateway = async (req, res) => {
 	}
 
 	try {
-		const response = await instance.orders.create(options)
-       
+		const response =await instance.orders.create(options)
 		console.log(response)
 		res.json({
 			id: response.id,

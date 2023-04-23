@@ -6,8 +6,8 @@ const controllers = require('../Controllers/payment.controller');
 
 const router = Router();
 
-router.post("/checkout", controllers.checkout);
-router.post("/paymentverification", controllers.paymentVerification);
+//router.post("/checkout", controllers.checkout);
+//router.post("/paymentverification", controllers.paymentVerification);
 router.post("/verification", controllers.verification);
 router.post("/paymentgateway", controllers.paymentgateway);
 module.exports = router;
