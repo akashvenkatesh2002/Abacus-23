@@ -6,6 +6,8 @@ const razorpay = require('razorpay');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 //const instance = require("../app.js");
+// const models = require("../database/models");
+
 const instance = new razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
     key_secret: process.env.RAZORPAY_API_SECRET,
@@ -58,26 +60,68 @@ const instance = new razorpay({
 //------------------------------------------------------
 exports.verification = async (req, res) => {
 
-    console.log("In VERIFY: " + req)
-
-    const crypto = require('crypto')
+	console.log("Printing req.body in verification func :", req.body)
     
-    const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_API_SECRET)
+	const crypto = require('crypto')
+    console.log(process.env.RAZORPAY_API_SECRET);
+	const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_API_SECRET)
+    
+	shasum.update(JSON.stringify(req.body))
+	const digest = shasum.digest('hex')
 
-    shasum.update(JSON.stringify(req))
-    const digest = shasum.digest('hex')
+	if (digest === req.headers['x-razorpay-signature']) {
+		console.log('request is legit')
 
-    console.log(digest, req.headers['x-razorpay-signature'])
+		require('fs').writeFileSync('payment1.json', JSON.stringify(req.body, null, 4))
 
-    if (digest === req.headers['x-razorpay-signature']) {
-        console.log('request is legit')
-        // await models.paymentSchema.create({
-        //     razorpay_order_id,
-        //     razorpay_payment_id,
-        //     razorpay_signature,
-        // });
+        const accessToken = req.body.accessToken
+        const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
+        const email = accessTokenDetails.aud
 
-        require('fs').writeFileSync('payment1.json', JSON.stringify(req.body, null, 4))
+        const user = await models.User.findOne({
+            where: {
+                email: email
+            }
+        })
+        const abacusId = user.abacusId;
+ 
+        //Insert into the database
+        //check in header if this is for workshop or eventPass
+        if(req.headers["workshopId"]) {
+            const workshopId = req.headers["workshopId"];
+            const isAbacusId = await models.Workshops.findOne({
+                where: {
+                    abacusId: abacusId
+                }
+            });
+
+            if(isAbacusId) {
+                const retValue = await models.Workshops.update(
+                    {
+                        workshopId: sequelize.fn('array_append', sequelize.col('workshopId'), workshopId)
+                    },
+                    {
+                        where: { abacusId: abacusId }
+                    }
+                )
+                res.status(201).send({ message: "Workshop Registered Successfully!" })
+            } else {
+                const retValue = await models.Workshops.create({
+                    abacusId: abacusId,
+                    workshopId: [WId],
+                })
+                res.status(201).send({ message: "Workshop Registered Successfully!" })
+            }
+        } else if (req.headers["eventPass"]) {
+            const userUpdated = await models.User.udpate(
+                {
+                    isPassBought: true
+                },
+                {
+                    where: { abacusId : abacusId }
+                }
+            )
+        }
         res.status(200).json({
             success: true,
             order,
@@ -93,21 +137,13 @@ exports.verification = async (req, res) => {
 
 exports.paymentgateway = async (req, res) => {
     const payment_capture = 1
-    const amount = req.body.amount
+    // const toBuyEventPass = req.body.toBuyEventPass;
+	const amount = req.body.amount
+        
+    console.log('amount = ', amount);
+    console.log('toBuyEventPass = ', toBuyEventPass);
+
     const currency = 'INR'
-    const accessToken = req.headers['authorization'];
-
-    const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
-    const email = accessTokenDetails.aud
-
-    const user = await models.User.findOne({
-        where: {
-            email: email
-        }
-    })
-
-    const abacusId = user.abacusId;
-    console.log("ABACUS ID: " + abacusId)
 
     const options = {
         amount: amount * 100,

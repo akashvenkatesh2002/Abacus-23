@@ -7,6 +7,7 @@ const controllers = require('../Controllers/dashboard.controller')
 router.post('/', controllers.viewDashboard)
 
 router.post('/registerEvent/:eventId', verifyAccessToken, controllers.registerEvent)
-router.post('/registerWorkshop/:workshopId', verifyAccessToken, controllers.registerWorkshop)
+router.post('/registerWorkshop/', verifyAccessToken, controllers.registerWorkshop)
+// router.post('/buyEventsPass', verifyAccessToken, controllers.)
 
 module.exports = router
