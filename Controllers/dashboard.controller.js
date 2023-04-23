@@ -44,32 +44,30 @@ exports.registerEvent = async (req, res, next) => {
         const accessToken = req.body.accessToken
         const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
         const email = accessTokenDetails.aud
-        console.log("1 " + ID);
+
         const user = await models.User.findOne({
             where: {
                 email: email
             }
         })
-        console.log("2 " + user);
+
         const abacusId = user.abacusId;
         const isPassBought = user.isPassBought;
-        console.log("3 " + abacusId);
 
-        //if isPassBought true {
         const isAbacusId = await models.Events.findOne({
             where: {
                 abacusId: abacusId
             }
         });
-        console.log("4 " + isAbacusId);
+
         if (isAbacusId && isPassBought) {
-            console.log("\nInside isAbacus")
+  
             const eventIdArray = isAbacusId.eventId;
-            // console.log("Event Array: " + eventIdArray)
+
             if (eventIdArray.includes(ID)) {
                 throw new createError("Already registered for the Event!");
             }
-            // console.log("Before ABCD")    
+   
             const retValue = await models.Events.update(
                 {
                     eventId: sequelize.fn('array_cat', sequelize.col('eventId'), [ID])
@@ -78,8 +76,6 @@ exports.registerEvent = async (req, res, next) => {
                     where: { abacusId: abacusId }
                 }
             )
-            // retValue.save() 
-            // console.log("After ABCD")
             res.status(201).send({ message: "Event Registered Successfully!" })
 
         } else {
@@ -99,72 +95,76 @@ exports.registerEvent = async (req, res, next) => {
                 throw new createError.Conflict("Please buy the pass for registering for an event");
             }
         }
-
-
-        // } else {
-
-        //}
     } catch (error) {
         next(error)
     }
 }
 
 exports.registerWorkshop = async (req, res, next) => {
-    try {
-        const WId = req.params.workshopId;
-        const accessToken = req.body.accessToken
-        const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
-        const email = accessTokenDetails.aud
+    
+    //make an axios call
+    
 
-        const user = await models.User.findOne({
-            where: {
-                email: email
-            }
-        })
 
-        const abacusId = user.abacusId;
 
-        const isAbacusId = await models.Workshops.findOne({
-            where: {
-                abacusId: abacusId
-            }
-        });
 
-        if (isAbacusId) {
-            const workshopIdArray = isAbacusId.workshopId;
-            if (workshopIdArray.includes(workshopId)) {
-                throw new createError("Already registered for the workshop!");
-            }
 
-            //payment
-            // if payment successful {
-            const retValue = await models.Workshops.update(
-                {
-                    workshopId: sequelize.fn('array_append', sequelize.col('workshopId'), workshopId)
-                },
-                {
-                    where: { abacusId: abacusId }
-                }
-            )
-            res.status(201).send({ message: "Workshop Registered Successfully!" })
-            //} else {
-            throw new createError("Payment unsuccessful!!");
-            //redirect to homepage
-            // }
-        } else {
-            //payment
-            //if payment successful {
-            const retValue = await models.Workshops.create({
-                abacusId: abacusId,
-                workshopId: [WId],
-            })
-            res.status(201).send({ message: "Workshop Registered Successfully!" })
-            //} else {
-            // throw new createError("Payment unsuccessful!!"); --TO BE WRITTEN IN ELSE
-            //redirect to homepage
-            //}
-        }
-    } catch (error) {
-        next(error)
-    }
+
+    // try {
+    //     const WId = req.params.workshopId;
+    //     const accessToken = req.body.accessToken
+    //     const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
+    //     const email = accessTokenDetails.aud
+
+    //     const user = await models.User.findOne({
+    //         where: {
+    //             email: email
+    //         }
+    //     })
+
+    //     const abacusId = user.abacusId;
+
+    //     const isAbacusId = await models.Workshops.findOne({
+    //         where: {
+    //             abacusId: abacusId
+    //         }
+    //     });
+
+    //     if (isAbacusId) {
+    //         const workshopIdArray = isAbacusId.workshopId;
+    //         if (workshopIdArray.includes(workshopId)) {
+    //             throw new createError("Already registered for the workshop!");
+    //         }
+
+    //         //payment
+    //         // if payment successful {
+    //         const retValue = await models.Workshops.update(
+    //             {
+    //                 workshopId: sequelize.fn('array_append', sequelize.col('workshopId'), workshopId)
+    //             },
+    //             {
+    //                 where: { abacusId: abacusId }
+    //             }
+    //         )
+    //         res.status(201).send({ message: "Workshop Registered Successfully!" })
+    //         //} else {
+    //         throw new createError("Payment unsuccessful!!");
+    //         //redirect to homepage
+    //         // }
+    //     } else {
+    //         //payment
+    //         //if payment successful {
+    //         const retValue = await models.Workshops.create({
+    //             abacusId: abacusId,
+    //             workshopId: [WId],
+    //         })
+    //         res.status(201).send({ message: "Workshop Registered Successfully!" })
+    //         //} else {
+    //         // throw new createError("Payment unsuccessful!!"); --TO BE WRITTEN IN ELSE
+    //         //redirect to homepage
+    //         //}
+    //     }
+    // } catch (error) {
+    //     next(error)
+    // }
 }

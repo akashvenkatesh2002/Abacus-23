@@ -6,9 +6,11 @@ const razorpay = require('razorpay');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 //const instance = require("../app.js");
+// const models = require("../database/models");
+
 const instance = new razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
-    key_secret: process.env.RAZORPAY_APT_SECRET,
+    key_secret: process.env.RAZORPAY_API_SECRET,
 });
 
 exports.checkout = async (req, res, next) => {
@@ -59,7 +61,7 @@ exports.paymentVerification = async (req, res) => {
 //------------------------------------------------------
 exports.verification = async (req, res) => {
 
-	console.log(req.body)
+	console.log("Printing req.body in verification func :", req.body)
     
 	const crypto = require('crypto')
     console.log(process.env.RAZORPAY_API_SECRET);
@@ -68,17 +70,59 @@ exports.verification = async (req, res) => {
 	shasum.update(JSON.stringify(req.body))
 	const digest = shasum.digest('hex')
 
-	console.log(digest, req.headers['x-razorpay-signature'])
-
 	if (digest === req.headers['x-razorpay-signature']) {
 		console.log('request is legit')
-		// await models.paymentSchema.create({
-        //     razorpay_order_id,
-        //     razorpay_payment_id,
-        //     razorpay_signature,
-        // });
 
 		require('fs').writeFileSync('payment1.json', JSON.stringify(req.body, null, 4))
+
+        const accessToken = req.body.accessToken
+        const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
+        const email = accessTokenDetails.aud
+
+        const user = await models.User.findOne({
+            where: {
+                email: email
+            }
+        })
+        const abacusId = user.abacusId;
+ 
+        //Insert into the database
+        //check in header if this is for workshop or eventPass
+        if(req.headers["workshopId"]) {
+            const workshopId = req.headers["workshopId"];
+            const isAbacusId = await models.Workshops.findOne({
+                where: {
+                    abacusId: abacusId
+                }
+            });
+
+            if(isAbacusId) {
+                const retValue = await models.Workshops.update(
+                    {
+                        workshopId: sequelize.fn('array_append', sequelize.col('workshopId'), workshopId)
+                    },
+                    {
+                        where: { abacusId: abacusId }
+                    }
+                )
+                res.status(201).send({ message: "Workshop Registered Successfully!" })
+            } else {
+                const retValue = await models.Workshops.create({
+                    abacusId: abacusId,
+                    workshopId: [WId],
+                })
+                res.status(201).send({ message: "Workshop Registered Successfully!" })
+            }
+        } else if (req.headers["eventPass"]) {
+            const userUpdated = await models.User.udpate(
+                {
+                    isPassBought: true
+                },
+                {
+                    where: { abacusId : abacusId }
+                }
+            )
+        }
         res.status(200).json({
             success: true,
             order,
@@ -94,8 +138,13 @@ exports.verification = async (req, res) => {
 
 exports.paymentgateway = async (req, res) => {
     const payment_capture = 1
+    const toBuyEventPass = req.body.toBuyEventPass;
 	const amount = req.body.amount
-	const currency = 'INR'
+        
+    console.log('amount = ', amount);
+    console.log('toBuyEventPass = ', toBuyEventPass);
+
+    const currency = 'INR'
 
 	const options = {
 		amount: amount * 100,
@@ -108,6 +157,8 @@ exports.paymentgateway = async (req, res) => {
 		const response = await instance.orders.create(options)
        
 		console.log(response)
+
+        // this.verification(req, res);
 		res.json({
 			id: response.id,
 			currency: response.currency,
