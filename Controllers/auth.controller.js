@@ -12,7 +12,7 @@ const bcrypt = require("bcrypt");
 const { userSchema, loginSchema } = require("../Helpers/validation.schema");
 const { signAccessToken } = require("../Helpers/jwt_helper");
 const sequelize = require("sequelize");
-
+const {OAuth2Client} = require('google-auth-library');
 const abacusIdGen = new uuid({ length: 8 });
 
 const CLIENT_ID = process.env.GOOGLECLIENT_ID
@@ -22,7 +22,7 @@ const REFRESH_TOKEN = process.env.GOOGLEREFRESH_TOKEN
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
-
+const client = new OAuth2Client(CLIENT_ID);
 exports.approveOtp = async (req, res, next) => {
     try {
 
@@ -251,7 +251,24 @@ exports.logoutUser = async (req, res, next) => {
         next(error)
     }
 }
-
+exports.glogin=async(req,res,next)=>{
+    let token = req.body.token;
+    
+    async function verify() {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+        });
+        const payload = ticket.getPayload();
+        const userid = payload['sub'];
+    }
+    verify()
+    .then(()=>{
+        res.cookie('session-token', token);
+        res.send('success')
+    })
+    .catch(console.error);
+}
 exports.forgotPassword = async (req, res, next) => {
     try {
 

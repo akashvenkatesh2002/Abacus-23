@@ -12,52 +12,51 @@ const instance = new razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
     key_secret: process.env.RAZORPAY_API_SECRET,
 });
+// exports.checkout = async (req, res, next) => {
+//     const options = {
+//         amount: Number(req.body.amount * 100),
+//         currency: "INR",
+//     };
+//     const order = await instance.orders.create(options);
 
-exports.checkout = async (req, res, next) => {
-    const options = {
-        amount: Number(req.body.amount * 100),
-        currency: "INR",
-    };
-    const order = await instance.orders.create(options);
+//     res.status(200).json({
+//         success: true,
+//         order,
+//         amount,
+//     });
+// };
 
-    res.status(200).json({
-        success: true,
-        order,
-        amount,
-    });
-};
+// exports.paymentVerification = async (req, res) => {
+//     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+//         req.body;
 
-exports.paymentVerification = async (req, res) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-        req.body;
+//     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
+//     const expectedSignature = crypto
+//         .createHmac("sha256", process.env.RAZORPAY_APT_SECRET)
+//         .update(body.toString())
+//         .digest("hex");
 
-    const expectedSignature = crypto
-        .createHmac("sha256", process.env.RAZORPAY_APT_SECRET)
-        .update(body.toString())
-        .digest("hex");
+//     const isAuthentic = expectedSignature === razorpay_signature;
 
-    const isAuthentic = expectedSignature === razorpay_signature;
+//     if (isAuthentic) {
+//         // Database comes here
 
-    if (isAuthentic) {
-        // Database comes here
+//         await models.paymentSchema.create({
+//             razorpay_order_id,
+//             razorpay_payment_id,
+//             razorpay_signature,
+//         });
 
-        await models.paymentSchema.create({
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature,
-        });
-
-        res.redirect(
-            `http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`
-        );
-    } else {
-        res.status(400).json({
-            success: false,
-        });
-    }
-};
+//         res.redirect(
+//             `http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`
+//         );
+//     } else {
+//         res.status(400).json({
+//             success: false,
+//         });
+//     }
+// };
 //------------------------------------------------------
 exports.verification = async (req, res) => {
 
@@ -128,12 +127,12 @@ exports.verification = async (req, res) => {
             order,
             amount,
         });
-	} else {
-		res.status(400).json({
+    } else {
+        res.status(400).json({
             success: false,
         });
-	}
-	//res.json({ status: 'ok' })
+    }
+    //res.json({ status: 'ok' })
 };
 
 exports.paymentgateway = async (req, res) => {
@@ -146,25 +145,32 @@ exports.paymentgateway = async (req, res) => {
 
     const currency = 'INR'
 
-	const options = {
-		amount: amount * 100,
-		currency,
-		receipt: shortid.generate(),
-		payment_capture
-	}
+    const options = {
+        amount: amount * 100,
+        currency,
+        receipt: shortid.generate(),
+        payment_capture
+    }
 
-	try {
-		const response = await instance.orders.create(options)
-       
-		console.log(response)
+    try {
+        if (req.headers['authorization']) {
+            const response = await instance.orders.create(options)
 
-        // this.verification(req, res);
-		res.json({
-			id: response.id,
-			currency: response.currency,
-			amount: response.amount
-		})
-	} catch (error) {
-		console.log(error)
-	}
+            console.log(response)
+
+            this.verification(req, res);
+
+            res.json({
+                id: response.id,
+                currency: response.currency,
+                amount: response.amount
+            })
+        }
+
+        else {
+            throw new createError("Unauthorized!");
+        }
+    } catch (error) {
+        console.log(error)
+    }
 };
