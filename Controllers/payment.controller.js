@@ -59,61 +59,83 @@ exports.paymentVerification = async (req, res) => {
 //------------------------------------------------------
 exports.verification = async (req, res) => {
 
-	console.log(req.body)
-    
-	const crypto = require('crypto')
+    console.log("In VERIFY: " + req)
+
+    const crypto = require('crypto')
     console.log(process.env.RAZORPAY_API_SECRET);
-	const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_API_SECRET)
-    
-	shasum.update(JSON.stringify(req.body))
-	const digest = shasum.digest('hex')
+    const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_API_SECRET)
 
-	console.log(digest, req.headers['x-razorpay-signature'])
+    shasum.update(JSON.stringify(req))
+    const digest = shasum.digest('hex')
 
-	if (digest === req.headers['x-razorpay-signature']) {
-		console.log('request is legit')
-		// await models.paymentSchema.create({
+    console.log(digest, req.headers['x-razorpay-signature'])
+
+    if (digest === req.headers['x-razorpay-signature']) {
+        console.log('request is legit')
+        // await models.paymentSchema.create({
         //     razorpay_order_id,
         //     razorpay_payment_id,
         //     razorpay_signature,
         // });
 
-		require('fs').writeFileSync('payment1.json', JSON.stringify(req.body, null, 4))
+        require('fs').writeFileSync('payment1.json', JSON.stringify(req.body, null, 4))
         res.status(200).json({
             success: true,
             order,
             amount,
         });
-	} else {
-		res.status(400).json({
+    } else {
+        res.status(400).json({
             success: false,
         });
-	}
-	//res.json({ status: 'ok' })
+    }
+    //res.json({ status: 'ok' })
 };
 
 exports.paymentgateway = async (req, res) => {
     const payment_capture = 1
-	const amount = req.body.amount
-	const currency = 'INR'
+    const amount = req.body.amount
+    const currency = 'INR'
+    const accessToken = req.headers['authorization'];
 
-	const options = {
-		amount: amount * 100,
-		currency,
-		receipt: shortid.generate(),
-		payment_capture
-	}
+    const accessTokenDetails = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString('ascii'))
+    const email = accessTokenDetails.aud
 
-	try {
-		const response = await instance.orders.create(options)
-       
-		console.log(response)
-		res.json({
-			id: response.id,
-			currency: response.currency,
-			amount: response.amount
-		})
-	} catch (error) {
-		console.log(error)
-	}
+    const user = await models.User.findOne({
+        where: {
+            email: email
+        }
+    })
+
+    const abacusId = user.abacusId;
+    console.log("ABACUS ID: " + abacusId)
+
+    const options = {
+        amount: amount * 100,
+        currency,
+        receipt: shortid.generate(),
+        payment_capture
+    }
+
+    try {
+        if (req.headers['authorization']) {
+            const response = await instance.orders.create(options)
+
+            console.log(response)
+
+            this.verification(req, res);
+
+            res.json({
+                id: response.id,
+                currency: response.currency,
+                amount: response.amount
+            })
+        }
+
+        else {
+            throw new createError("Unauthorized!");
+        }
+    } catch (error) {
+        console.log(error)
+    }
 };
