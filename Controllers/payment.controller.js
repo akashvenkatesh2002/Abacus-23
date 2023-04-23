@@ -137,7 +137,7 @@ exports.verification = async (req, res) => {
 
 exports.paymentgateway = async (req, res) => {
     const payment_capture = 1
-    const toBuyEventPass = req.body.toBuyEventPass;
+    // const toBuyEventPass = req.body.toBuyEventPass;
 	const amount = req.body.amount
         
     console.log('amount = ', amount);
