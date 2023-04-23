@@ -251,6 +251,7 @@ exports.logoutUser = async (req, res, next) => {
         next(error)
     }
 }
+
 exports.glogin=async(req,res,next)=>{
     let token = req.body.token;
     
@@ -269,6 +270,7 @@ exports.glogin=async(req,res,next)=>{
     })
     .catch(console.error);
 }
+
 exports.forgotPassword = async (req, res, next) => {
     try {
 
