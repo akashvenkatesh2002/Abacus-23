@@ -23,6 +23,55 @@ const REFRESH_TOKEN = process.env.GOOGLEREFRESH_TOKEN
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
 const client = new OAuth2Client(CLIENT_ID);
+
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
+
+exports.google=async(req,res,next)=>{
+    let token = req.body.token;
+    
+    async function verify() {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+        });
+        const payload = ticket.getPayload();
+        const userid = payload['sub'];
+    }
+    verify()
+    .then(()=>{
+        res.cookie('session-token', token);
+        res.send('success')
+    })
+    .catch(console.error);
+}
+
+function checkAuthenticated(req, res, next){
+
+    let token = req.cookies['session-token'];
+
+    let user = {};
+    async function verify() {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+        });
+        const payload = ticket.getPayload();
+        user.name = payload.name;
+        user.email = payload.email;
+        user.picture = payload.picture;
+      }
+      verify()
+      .then(()=>{
+          req.user = user;
+          next();
+      })
+      .catch(err=>{
+          res.redirect('/dashboard')
+      })
+
+}
+
 exports.approveOtp = async (req, res, next) => {
     try {
 
@@ -252,24 +301,6 @@ exports.logoutUser = async (req, res, next) => {
     }
 }
 
-exports.glogin=async(req,res,next)=>{
-    let token = req.body.token;
-    
-    async function verify() {
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
-        });
-        const payload = ticket.getPayload();
-        const userid = payload['sub'];
-    }
-    verify()
-    .then(()=>{
-        res.cookie('session-token', token);
-        res.send('success')
-    })
-    .catch(console.error);
-}
 
 exports.forgotPassword = async (req, res, next) => {
     try {
@@ -302,8 +333,6 @@ exports.forgotPassword = async (req, res, next) => {
             },
             { where: { email: email } }
         )
-
-        //
 
         const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
         oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
