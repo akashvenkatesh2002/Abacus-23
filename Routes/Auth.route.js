@@ -7,7 +7,7 @@ router.post('/register', controllers.registerUser)
 
 router.post('/login', controllers.loginUser)
 
-router.post('/glogin', controllers.glogin)
+router.post('/google', controllers.google)
 
 router.delete('/logout', controllers.logoutUser)
 
