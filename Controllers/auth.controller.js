@@ -23,6 +23,10 @@ const REFRESH_TOKEN = process.env.GOOGLEREFRESH_TOKEN
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
 const client = new OAuth2Client(CLIENT_ID);
+
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
+
 exports.approveOtp = async (req, res, next) => {
     try {
 
@@ -302,8 +306,6 @@ exports.forgotPassword = async (req, res, next) => {
             },
             { where: { email: email } }
         )
-
-        //
 
         const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
         oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })

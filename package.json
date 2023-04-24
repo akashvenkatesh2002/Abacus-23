@@ -25,6 +25,8 @@
     "nanoid": "^4.0.2",
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.22",
+    "passport": "^0.6.0",
+    "passport-google-oauth2": "^0.2.0",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
     "razorpay": "^2.8.6",
