@@ -17,7 +17,26 @@ const loginSchema = Joi.object({
     password: Joi.string().required()
 })
 
+const gamindromeSchema = Joi.object({
+    member1 : Joi.string().required(),
+    riotId1: Joi.string().regex(/[#][0-9]{4}$/).required(),
+    discordId1: Joi.string().regex(/[#][0-9]{4}$/),
+    member2 : Joi.string().required(),
+    riotId2: Joi.string().regex(/[#][0-9]{4}$/).required(),
+    discordId2: Joi.string().regex(/[#][0-9]{4}$/),
+    member3 : Joi.string().required(),
+    riotId3: Joi.string().regex(/[#][0-9]{4}$/).required(),
+    discordId3: Joi.string().regex(/[#][0-9]{4}$/),
+    member4 : Joi.string().required(),
+    riotId4: Joi.string().regex(/[#][0-9]{4}$/).required(),
+    discordId4: Joi.string().regex(/[#][0-9]{4}$/),
+    member5 : Joi.string().required(),
+    riotId5: Joi.string().regex(/[#][0-9]{4}$/).required(),
+    discordId5: Joi.string().regex(/[#][0-9]{4}$/)
+})
+
 module.exports = {
     userSchema,
-    loginSchema
+    loginSchema,
+    gamindromeSchema
 }

@@ -20,3 +20,9 @@ Tomorrow
 3. Integration
 4. Test workshop
 5. Gsignin
+
+24-04-2023
+
+1. Payment db to be created after payment
+2. Integrate payment into our routes (if payment successful and all that)
+3. Integration with frontend
