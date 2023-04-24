@@ -27,6 +27,7 @@ module.exports = {
                 return next(createError.Unauthorized())
             }
             req.payload = payload
+            console.log('Just before next');
             next()
         })
     }

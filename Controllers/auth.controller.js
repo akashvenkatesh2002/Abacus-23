@@ -9,7 +9,7 @@ const models = require("../database/models");
 const createError = require("http-errors");
 const bcrypt = require("bcrypt");
 const {userSchema, loginSchema} = require("../helpers/validation.schema");
-const {signAccessToken} = require("../helpers/jwt_helper");
+const {signAccessToken} = require("../Helpers/jwt_helper");
 const sequelize = require("sequelize");
 
 const CLIENT_ID=process.env.GOOGLECLIENT_ID
