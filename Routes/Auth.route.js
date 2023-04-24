@@ -1,11 +1,13 @@
 const express = require('express')
 const router = express.Router()
 
-const controllers = require('../controllers/auth.controller')
+const controllers = require('../Controllers/auth.controller')
 
 router.post('/register', controllers.registerUser)
 
 router.post('/login', controllers.loginUser)
+
+router.post('/google', controllers.google)
 
 router.delete('/logout', controllers.logoutUser)
 
@@ -18,5 +20,7 @@ router.post('/reset-password', controllers.resetPassword)
 router.post('/logout-all-devices', controllers.logoutAll)
 
 router.post('/change-password', controllers.changePassword)
+
+router.post('/verify-email', controllers.verifyEmail)
 
 module.exports = router

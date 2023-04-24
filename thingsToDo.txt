@@ -1,0 +1,28 @@
+1. Implement payment portal
+2. Create events pass (on the front end)
+DONE 3. IsCEGIAN function
+4. If isPassBought, allow event registration, else only if they pay, is PassBought = true 
+5. Check if payment successful for each workshop, only then add them 
+DONE 6. College Email should be unique.
+7. Put code from dashboard.controller to auth.controller, and dashboard.routes to auth.routes
+8. If isPassBought == false, and they click register and pay, what to do? 
+9. OTP to email
+10. Workshop isPaid problem
+11. Add Department column to Users table
+
+Today
+1. Test events
+2. Logout all devices
+
+Tomorrow
+1. Get details of forget, reset and change password from Girish
+2. Get details from user after GSignIn (Front End)
+3. Integration
+4. Test workshop
+5. Gsignin
+
+24-04-2023
+
+1. Payment db to be created after payment
+2. Integrate payment into our routes (if payment successful and all that)
+3. Integration with frontend
