@@ -10,6 +10,7 @@ const { verifyAccessToken } = require('./Helpers/jwt_helper')
 const AuthRoute = require('./Routes/Auth.route')
 const DashboardRoute = require('./Routes/Dashboard.route')
 const PaymentRoute = require('./Routes/paymentRoute')
+const { onWebHook } = require('./Controllers/payment.controller')
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.get('/login', (req,res)=>{
 app.use('/auth', AuthRoute)
 app.use('/dashboard', DashboardRoute)
 app.use('/payment', PaymentRoute)
+app.post('/webhook', onWebHook);
 
 app.use(async(req, res, next) => {
     next(createError.NotFound('This route does not exist'))

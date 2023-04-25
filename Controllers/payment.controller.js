@@ -118,7 +118,7 @@ exports.verification = async (req, res) => {
                 res.status(201).send({ message: "Workshop Registered Successfully!" })
             }
         } else if (req.headers["eventPass"]) {
-            const userUpdated = await models.User.udpate(
+            const userUpdated = await models.User.update(
                 {
                     isPassBought: true
                 },
@@ -185,3 +185,21 @@ exports.paymentgateway = async (req, res) => {
         console.log(error)
     }
 };
+
+exports.onWebHook = async(req, res) => {
+    console.log('INSIDE THE WEBHOOK HANDLER');
+    const payload = req.body;
+    if(payload.event) {
+        if(payload.event == 'order.paid') {
+            console.log(payload.payload.payment);
+            console.log(payload.payload.order);
+            const order = payload.payload.order.entity.status;
+            console.log(order);
+            if(order == 'paid') {
+                console.log('Send Success message');
+                console.log('PAYMENT HAS BEEN PAID');
+                res.status(201).send({message: "INSIDE THE WEBHOOK"});
+            }
+        }
+    }
+}
