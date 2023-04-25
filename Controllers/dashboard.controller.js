@@ -5,7 +5,7 @@ require('dotenv').config()
 const models = require("../database/models");
 const createError = require("http-errors");
 const bcrypt = require("bcrypt");
-const { userSchema, loginSchema } = require("../Helpers/validation.schema");
+const { userSchema, loginSchema, gamindromeSchema } = require("../Helpers/validation.schema");
 const { signAccessToken } = require("../Helpers/jwt_helper");
 const sequelize = require("sequelize");
 
@@ -65,10 +65,10 @@ exports.registerPaidEvent = async (req, res, next) => {
 
 
             //code to put in chess table
-            // await models.Chess.create({
-            //     abacusId: abacusId
-            // })
-            res.send("Registration successful!")
+            await models.Chess.create({
+                abacusId: abacusId
+            })
+            res.json({ "status": 200, "message": "Registration successful!"});
         } else if (eventName === 'gamindrome') {
             
             //validating riotId and discordId
@@ -80,27 +80,38 @@ exports.registerPaidEvent = async (req, res, next) => {
             const member4 = req.body.member4;
             const member5 = req.body.member5;
 
-            // const riotId1 = req.body.riotId1;
-            // const riotId2 = req.body.riotId2;
-            // const riotId3 = req.body.riotId3;
-            // const riotId4 = req.body.riotId4;
-            // const riotId5 = req.body.riotId5;
+            const riotId1 = req.body.riotId1;
+            const riotId2 = req.body.riotId2;
+            const riotId3 = req.body.riotId3;
+            const riotId4 = req.body.riotId4;
+            const riotId5 = req.body.riotId5;
 
-            // const discordId1 = req.body.discordId1;
-            // const discordId2 = req.body.discordId2;
-            // const discordId3 = req.body.discordId3;
-            // const discordId4 = req.body.discordId4;
-            // const discordId5 = req.body.discordId5;
+            const discordId1 = req.body.discordId1;
+            const discordId2 = req.body.discordId2;
+            const discordId3 = req.body.discordId3;
+            const discordId4 = req.body.discordId4;
+            const discordId5 = req.body.discordId5;
 
-            // const set = new Set([member1, member2, member3, member4, member5]);
+            const set = new Set([member1, member2, member3, member4, member5]);
+            const memberArray = [member1, member2, member4, member4, member5];
+            const setRiot = new Set([riotId1, riotId2, riotId3, riotId4, riotId5]);
+            // const setDiscord = new Set([discordId1, discordId2, discordId3, discordId4, discordId5]);
 
             if(set.size != 5) {
                 throw new createError("Enter 5 unique team members!");
             }
 
+            if(setRiot.size != 5) {
+                throw new createError("Enter 5 unique Riot IDs!");
+            }
+
+            // if(setDiscord.size != 5) {
+            //     throw new createError("Enter 5 unique Dis!");
+            // }
+
             //validate abacusId 
             for(let i = 0; i < 5; i++) {
-                const user = models.Users.findOne({where: {abacusId : abacusId}});
+                const user = await models.User.findOne({where: {abacusId : memberArray[i]}});
                 if(!user) {
                     throw new createError(`AbacusId Not found for member ${i+1}`);
                 }
@@ -108,13 +119,14 @@ exports.registerPaidEvent = async (req, res, next) => {
 
             //validate if member not in any other team
             for(let i = 0; i < 5; i++) {
-                const mem2 = models.Gamindrome.findOne({where: {member2: set[i]}});
-                const mem1 = models.Gamindrome.findOne({where: {member1: set[i]}});
-                const mem3 = models.Gamindrome.findOne({where: {member3: set[i]}});
-                const mem4 = models.Gamindrome.findOne({where: {member4: set[i]}});
-                const mem5 = models.Gamindrome.findOne({where: {member5: set[i]}});
+                const mem1 = await models.Gamindrome.findOne({where: {member1: memberArray[i]}});
+                const mem2 = await models.Gamindrome.findOne({where: {member2: memberArray[i]}});
+                const mem3 = await models.Gamindrome.findOne({where: {member3: memberArray[i]}});
+                const mem4 = await models.Gamindrome.findOne({where: {member4: memberArray[i]}});
+                const mem5 = await models.Gamindrome.findOne({where: {member5: memberArray[i]}});
 
                 let orValue = mem1 || mem2 || mem3 || mem4 || mem5 ;
+                console.log("The OR VALUE IS : ", orValue);
 
                 if(orValue) {
                     throw new createError(`Member ${set[i]} already registered in a different team!`);
@@ -124,23 +136,24 @@ exports.registerPaidEvent = async (req, res, next) => {
             //payment
 
             //insertion
-            // const insertion = models.Gamindromes.create({
-            //     member1 : set[0],
-            //     member2 : set[1],
-            //     member3 : set[2],
-            //     member4 : set[3],
-            //     member5 : set[4],
-            //     riotId1,
-            //     riotId2,
-            //     riotId3,
-            //     riotId4,
-            //     riotId5,
-            //     discordId1,
-            //     discordId2,
-            //     discordId3,
-            //     discordId4,
-            //     discordId5,
-            // })
+            const insertion = models.Gamindrome.create({
+                member1 : memberArray[0],
+                member2 : memberArray[1],
+                member3 : memberArray[2],
+                member4 : memberArray[3],
+                member5 : memberArray[4],
+                riotId1,
+                riotId2,
+                riotId3,
+                riotId4,
+                riotId5,
+                discordId1,
+                discordId2,
+                discordId3,
+                discordId4,
+                discordId5,
+            })
+            res.json({"status": 200, "message" : "All members registered successfully!"});
         }
     } catch(error) {
         next(error)

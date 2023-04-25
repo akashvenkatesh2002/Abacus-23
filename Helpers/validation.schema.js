@@ -18,21 +18,23 @@ const loginSchema = Joi.object({
 })
 
 const gamindromeSchema = Joi.object({
+    accessToken: Joi.string().required(),
+    eventName: Joi.string().required(),
     member1 : Joi.string().required(),
     riotId1: Joi.string().regex(/[#][0-9]{4}$/).required(),
-    discordId1: Joi.string().regex(/[#][0-9]{4}$/),
+    discordId1: Joi.string().regex(/[#][0-9]{4}$/).allow(''),
     member2 : Joi.string().required(),
     riotId2: Joi.string().regex(/[#][0-9]{4}$/).required(),
-    discordId2: Joi.string().regex(/[#][0-9]{4}$/),
+    discordId2: Joi.string().regex(/[#][0-9]{4}$/).allow(''),
     member3 : Joi.string().required(),
     riotId3: Joi.string().regex(/[#][0-9]{4}$/).required(),
-    discordId3: Joi.string().regex(/[#][0-9]{4}$/),
+    discordId3: Joi.string().regex(/[#][0-9]{4}$/).allow(''),
     member4 : Joi.string().required(),
     riotId4: Joi.string().regex(/[#][0-9]{4}$/).required(),
-    discordId4: Joi.string().regex(/[#][0-9]{4}$/),
+    discordId4: Joi.string().regex(/[#][0-9]{4}$/).allow(''),
     member5 : Joi.string().required(),
     riotId5: Joi.string().regex(/[#][0-9]{4}$/).required(),
-    discordId5: Joi.string().regex(/[#][0-9]{4}$/)
+    discordId5: Joi.string().regex(/[#][0-9]{4}$/).allow('')
 })
 
 module.exports = {
